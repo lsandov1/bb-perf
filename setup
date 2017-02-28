@@ -1,0 +1,10 @@
+1. Setup the poky environment
+2. Copy bitbake/auto.conf into conf folder
+3. Edit conf/auto.conf and set the correct DL_DIR
+4. In another terminal, launch 'vmstat 2 > vmstat.raw'
+5. run 'bitbake core-image-minimal'
+6. Once bitbake finishes, Ctr+D the vmstat command
+7. Clean it with
+       cat vmstat.raw | egrep -v '^procs|^ r' > vmstat.clean
+8. Plot it with
+       gnuplot -e 'data=./vmstat.clean' vmstat.gnu
