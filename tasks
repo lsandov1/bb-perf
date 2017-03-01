@@ -1,0 +1,29 @@
+Daily Tasks
+
+Feb 27
+
+
+* Kick-off meeting
+* This is exploration!
+* Book: System Performance:  Enterprise and the Cloud
+* Demo at Leo's Desk showing vmstat plots
+
+
+Feb 28
+
+* Discussed briefly the plan with RP, he believes we can use the buildstats
+* Multiple builds (bitbake core-image-minimal) done in order to compare previous plots
+
+
+Feb 29
+
+* RP findings
+  - http://lists.openembedded.org/pipermail/openembedded-architecture/2015-November/000001.html
+  - https://lkml.org/lkml/2015/12/7/309
+
+Mar 01
+
+* Second meeting
+  * vmstats plots in good shape, world plots missing
+  * TODO: vmstats needs units
+  * TODO: Replicate RP findings and follow threads
