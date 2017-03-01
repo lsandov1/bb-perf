@@ -15,13 +15,12 @@ Feb 28
 * Multiple builds (bitbake core-image-minimal) done in order to compare previous plots
 
 
-Feb 29
+Mar 01
 
 * RP findings
   - http://lists.openembedded.org/pipermail/openembedded-architecture/2015-November/000001.html
   - https://lkml.org/lkml/2015/12/7/309
 
-Mar 01
 
 * Second meeting
   * vmstats plots in good shape, world plots missing
