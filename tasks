@@ -26,3 +26,25 @@ Mar 01
   * vmstats plots in good shape, world plots missing
   * TODO: vmstats needs units
   * TODO: Replicate RP findings and follow threads
+ 
+ Mar 02
+ 
+* Installed 'VTUNE Amplifier Profiler'
+* Conclude vmstats plots
+
+Mar 03
+
+* Vtune discarted for the project (several issues on the profiling step)
+* TODO on the wiki [1]
+  * re-run core-image-minimal and produce plots with correct units
+  * include more details of the steps done for creating the plots (steps)
+* strace enabled into the buildstats [2]
+  * TODO:
+    * scripts to parse total syscalls and execve 
+    * plot top 'forky' process
+    * plot top syscall callee process
+
+
+
+[1] https://wiki.yoctoproject.org/wiki/Vmstat
+[2] http://git.yoctoproject.org/cgit/cgit.cgi/poky-contrib/commit/?h=lsandov1/buildstats-forky-process
