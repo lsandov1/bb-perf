@@ -1,0 +1,43 @@
+From 4e5b2d0e0abe2c6e52c3ca27272a52ef79a99a76 Mon Sep 17 00:00:00 2001
+From: Leonardo Sandoval <leonardo.sandoval.gonzalez@linux.intel.com>
+Date: Fri, 3 Mar 2017 15:41:29 -0600
+Subject: [PATCH] buildhistory.bbclass: strace -c every task
+
+Signed-off-by: Leonardo Sandoval <leonardo.sandoval.gonzalez@linux.intel.com>
+---
+ meta/classes/buildstats.bbclass | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/meta/classes/buildstats.bbclass b/meta/classes/buildstats.bbclass
+index 960653c..05a77e8 100644
+--- a/meta/classes/buildstats.bbclass
++++ b/meta/classes/buildstats.bbclass
+@@ -128,6 +128,7 @@ python run_buildstats () {
+         # set the buildname
+         ########################################################################
+         bb.utils.mkdirhier(bsdir)
++        bb.utils.mkdirhier('/tmp/strace')
+         set_buildtimedata("__timedata_build", d)
+         build_time = os.path.join(bsdir, "build_stats")
+         # write start of build into build_time
+@@ -162,6 +163,17 @@ python run_buildstats () {
+             f.write("Event: %s \n" % bb.event.getName(e))
+             f.write("Started: %0.2f \n" % e.time)
+ 
++        pn = d.getVar("PN", True)
++        parentpid = os.getpid()
++        pid = os.fork() 
++        if pid == 0:
++            os.setsid()
++            pid2 = os.fork()
++            if pid2 > 0:
++                os._exit(os.EX_OK)
++            output = subprocess.check_output("strace -p %s -f -c -q -o /tmp/strace/%s.%s.%s" % (parentpid, pn, e.task, parentpid), shell=True)
++            os._exit(os.EX_OK)
++
+     elif isinstance(e, bb.build.TaskSucceeded):
+         write_task_data("passed", os.path.join(taskdir, e.task), e, d)
+         if e.task == "do_rootfs":
+-- 
+2.1.4
+
