@@ -26,13 +26,13 @@ fi
 cd poky
 git am ../patches/0001-buildhistory.bbclass-strace-c-every-task.patch
 if [ $? -ne 0 ]; then
-   echo "strace not enable, patch $STRACE_PATCH manually"
+   echo "strace not enable, patch $STRACE_PATCH manually or check if already present"
    exit 1
 fi
 
 # fetch those missing upstream projects
-BUILD=$(mktemp -p $PWD -d build-$$-XXXXX)
-. $PWD/oe-init-build-env $BUILD
+[ -d $PWD/build ] && { echo "ERROR: Build folder ($PWD/build) present, remove it and execute $0 again";  exit 1; }
+. $PWD/oe-init-build-env build
 cat > conf/auto.conf << EOF
 DL_DIR = "$DL_DIR"
 EOF
