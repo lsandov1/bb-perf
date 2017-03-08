@@ -1,65 +1,54 @@
-#!/bin/sh
+#!/usr/bin/python
 
-# plot HW info
-lscpu
-free
+import sys
+import glob
+import operator
+import argparse
 
-# make sure DL_DIR parameter is provided
-if [ ! $# -eq 1 ]; then
-    echo "$0 DL_DIR"
-    exit 1
-fi
+def main(top):
+    tasks = dict()
+    strace_files = glob.glob('*.do_*')
 
-# check tools
-which vmstat > /dev/null || { echo "Install vmstat before running $0"; exit 1; }
+    for f in strace_files:
+        task = f.split('.')[-2]
+        if not tasks.has_key(task):
+            tasks[task] = dict()
+        syscall_dict = tasks[task]
+        with open(f) as fd:
+            fd.readline()
+            fd.readline()
+            for line in fd:
 
-# download directory
-DL_DIR=$1
-DL_DIR=$(realpath -e $DL_DIR)
+                if '---' in line:
+                    break
 
-# clone poky
-if [ ! -d poky ]; then
-    git clone git://git.yoctoproject.org/poky
-fi
+                seconds = None
+                syscall = None
+                data = line.split()
+                if len(data) == 6:
+                    time, seconds, usec_per_call, calls, errors, syscall = data
+                else:
+                    time, seconds, usec_per_call, calls, syscall = data
 
-# patch
-cd poky
-git am ../patches/0001-buildhistory.bbclass-strace-c-every-task.patch
-if [ $? -ne 0 ]; then
-   echo "strace not enable, patch $STRACE_PATCH manually or check if already present"
-   exit 1
-fi
+                seconds = float(seconds)
+                if not syscall_dict.has_key(syscall):
+                    syscall_dict[syscall] = seconds
+                else:
+                    syscall_dict[syscall] += seconds
 
-# fetch those missing upstream projects
-[ -d $PWD/build ] && { echo "ERROR: Build folder ($PWD/build) present, remove it and execute $0 again";  exit 1; }
-. $PWD/oe-init-build-env build
-cat > conf/auto.conf << EOF
-DL_DIR = "$DL_DIR"
-EOF
-bitbake core-image-minimal -c fetchall
 
-# disable network access
-cat >> conf/auto.conf << EOF
-BB_NO_NETWORK = "1"
-EOF
+    #sort data
+    sorted_tasks = dict()
+    for task, data in tasks.items():
+        sorted_tasks[task] = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
 
-# start build in background
-bitbake core-image-minimal 1>/dev/null
-pid_bitbake=$!
+    for task, data in sorted_tasks.items():
+        for i in xrange(1):
+            syscall, seconds = data[i]
+            print '%s %s %s' % (task, syscall, seconds)
 
-# If this script is killed, kill both process.
-trap "kill $pid_bitbake 2> /dev/null" EXIT
-trap "kill $pid_bitbake 2> /dev/null" INT
-
-cat <<EOF
-
-strace data is collected into /tmp/strace.
-
-# Forky tasks
-grep -r execve /tmp/strace | awk '{print $5,$1}' | sort -n -r | head -25
-
-EOF
-
-# Disable the trap on a normal exit.
-trap - EXIT
-trap - INT
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Sum syscall per bb tasks and print the top ones')
+    parser.add_argument('--top', dest='top', default=1, help='top n')
+    args = parser.parse_args()
+    sys.exit(main(args.top))
