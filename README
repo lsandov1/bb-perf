@@ -1,2 +1,16 @@
-Repository containing scripts and data monitoring bibtake
+(Bitbake) Build Performance
+
+vmstat
+------
+
+The script vmstat.sh launch 'bitbake core-image-minimal' while vmstat starts monitoring the system. Once executed,
+follow directions to produce gnuplot plots.
+
+
+strace
+------
+
+The script strace.sh launch 'bitbake core-image-minmal' while strace monitors each recipe's task. Once executed,
+follow directions to produce tables.
+
 
