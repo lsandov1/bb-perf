@@ -24,8 +24,10 @@ fi
 
 # fetch those missing upstream projects
 cd poky/
-[ -d $PWD/build ] && { echo "ERROR: Build folder ($PWD/build) present, remove it and execute $0 again";  exit 1; }
-. $PWD/oe-init-build-env build
+BUILD=$PWD/build
+[ -d $BUILD] && { echo "ERROR: Build folder ($PWD/build) present, remove it and execute $0 again";  exit 1; }
+. $PWD/oe-init-build-env $BUILD
+
 cat > conf/auto.conf << EOF
 DL_DIR = "$DL_DIR"
 EOF
