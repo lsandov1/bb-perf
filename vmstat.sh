@@ -1,5 +1,21 @@
 #!/bin/sh
 
+# kill a process with SIGTERM, if fail, send SIGKILL
+function killproc() {
+    local pid=$1
+
+    [ -z "$pid" ] && return
+
+    kill -TERM $pid
+
+    # give some time to terminate
+    sleep 1
+
+    if kill -0 $pid 2 > /dev/null; then
+	kill -KILL $pid;
+    fi
+}
+
 # make sure DL_DIR parameter is provided
 if [ ! $# -eq 1 ]; then
     cat << EOF
@@ -67,7 +83,7 @@ echo "Monitoring finished"
 echo ""
 
 # kill the monitor system
-kill -2 $pid_vmstat
+killproc $pid_vmstat
 
 
 vmstat=$(basename $VMSTAT_LOG .log)
