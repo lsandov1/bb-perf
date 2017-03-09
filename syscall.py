@@ -5,9 +5,9 @@ import glob
 import operator
 import argparse
 
-def main(top):
+def main(top, stracedir):
     tasks = dict()
-    strace_files = glob.glob('*.do_*')
+    strace_files = glob.glob('%s/*.do_*' % stracedir)
 
     for f in strace_files:
         task = f.split('.')[-2]
@@ -48,6 +48,7 @@ def main(top):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Sum syscall per bb tasks and print the top ones')
-    parser.add_argument('--top', dest='top', default=1, help='top n')
+    parser.add_argument('--top', dest='top', type=int, default=1, help='top n')
+    parser.add_argument('--strace-dir', dest='stracedir', type=str, default='/tmp/strace', help='Folder where strace data is located')
     args = parser.parse_args()
-    sys.exit(main(args.top))
+    sys.exit(main(args.top, args.stracedir))
