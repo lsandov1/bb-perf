@@ -44,7 +44,7 @@ fi
 
 # fetch those missing upstream projects
 BUILD=$PWD/build
-[ -d $BUILD] && { echo "ERROR: Build folder ($PWD/build) present, remove it and execute $0 again";  exit 1; }
+[ -d $BUILD ] && { echo "ERROR: Build folder ($PWD/build) present, remove it and execute $0 again";  exit 1; }
 . $PWD/oe-init-build-env $BUILD
 cat > conf/auto.conf << EOF
 DL_DIR = "$DL_DIR"
