@@ -30,8 +30,9 @@ if [ ! -d poky ]; then
 fi
 
 # patch
+REPO=$(dirname $(realpath $0))
 cd poky
-git am ../patches/0001-buildhistory.bbclass-strace-c-every-task.patch 2>/dev/null
+git am $REPO/patches/strace.patch 2>/dev/null
 if [ $? -ne 0 -a -z "$2" ];  then
    cat <<EOF
 
@@ -41,6 +42,7 @@ strace patch was not applied; in case patch is present, include
 EOF
    exit 1
 fi
+
 
 # fetch those missing upstream projects
 BUILD=$PWD/build
