@@ -1,11 +1,12 @@
 #!/bin/sh
 
 # make sure DL_DIR parameter is provided
-if [ ! $# -eq 1 ]; then
+if [ $# -eq 0 ]; then
     cat << EOF
-Usage: $0 DL_DIR
+Usage: $0 DL_DIR [--ignore-apply]
 
 DL_DIR: The 'download directory used by Poky (use the one most populated to minimize downloads)
+--ignore-apply: Ignore error when applying the strace patch
 
 EOF
     exit 1
@@ -18,6 +19,7 @@ which strace > /dev/null || { echo "Install strace before running $0"; exit 1; }
 DL_DIR=$1
 DL_DIR=$(realpath -e $DL_DIR)
 
+
 # plot HW info
 lscpu
 free
@@ -29,9 +31,14 @@ fi
 
 # patch
 cd poky
-git am ../patches/0001-buildhistory.bbclass-strace-c-every-task.patch
-if [ $? -ne 0 ]; then
-   echo "strace not enable, patch $STRACE_PATCH manually or check if already present"
+git am ../patches/0001-buildhistory.bbclass-strace-c-every-task.patch 2>/dev/null
+if [ $? -ne 0 -a -z "$2" ];  then
+   cat <<EOF
+
+strace patch was not applied; in case patch is present, include
+--ignore-apply in the command line
+
+EOF
    exit 1
 fi
 
