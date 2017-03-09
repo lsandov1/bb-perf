@@ -1,21 +1,26 @@
 #!/bin/sh
 
-# plot HW info
-lscpu
-free
-
 # make sure DL_DIR parameter is provided
 if [ ! $# -eq 1 ]; then
-    echo "$0 DL_DIR"
+    cat << EOF
+Usage: $0 DL_DIR
+
+DL_DIR: The 'download directory used by Poky (use the one most populated to minimize downloads)
+
+EOF
     exit 1
 fi
 
 # check tools
-which vmstat > /dev/null || { echo "Install vmstat before running $0"; exit 1; }
+which strace > /dev/null || { echo "Install strace before running $0"; exit 1; }
 
 # download directory
 DL_DIR=$1
 DL_DIR=$(realpath -e $DL_DIR)
+
+# plot HW info
+lscpu
+free
 
 # clone poky
 if [ ! -d poky ]; then
