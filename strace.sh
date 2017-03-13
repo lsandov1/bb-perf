@@ -20,6 +20,9 @@ DL_DIR=$1
 DL_DIR=$(realpath -e $DL_DIR)
 
 
+# drop caches
+sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+
 # plot HW info
 lscpu
 free

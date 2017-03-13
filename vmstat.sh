@@ -6,7 +6,7 @@ function killproc() {
 
     [ -z "$pid" ] && return
 
-    kill -TERM $pid
+    kill -TERM $pid 2>/dev/null
 
     # give some time to terminate
     sleep 1
@@ -33,6 +33,9 @@ which vmstat > /dev/null || { echo "Install vmstat before running $0"; exit 1; }
 # download directory
 DL_DIR=$1
 DL_DIR=$(realpath -e $DL_DIR)
+
+# drop caches
+sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 
 # plot CPU/Memory info
 lscpu
