@@ -71,7 +71,7 @@ cat <<EOF
 strace data is collected into /tmp/strace.
 
 # Forky tasks
-grep -r execve /tmp/strace | awk '{print $5,$1}' | sort -n -r | head -25
+grep -r execve /tmp/strace | awk '{print \$5,\$1}' | sort -n -r | head -25
 
 EOF
 
